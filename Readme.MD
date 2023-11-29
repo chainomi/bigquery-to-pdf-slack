@@ -7,7 +7,8 @@ Use the following commands to run the application using python
 > 3. Check python version and folder where dependencies will be run from - `which python`
 > 4. Install dependencies - `pip install -r requirements.txt`
 > 5. Set environment variables
-    > `export GOOGLE_APPLICATION_CREDENTIALS="../useful-circle-358120-5ebbc15b4e95.json"`
+    > `export GOOGLE_APPLICATION_CREDENTIALS="path/to/key.json"`
+    >  run `gcloud auth application-default login` to set ADC (application default credentials) if you wish to no use a key 
     > `export TABLE="useful-circle-358120.log_sink.cloudaudit_googleapis_com_activity_20231122"` 
     > `export BUCKET="bigquery-test-chainomi-2023"`
 

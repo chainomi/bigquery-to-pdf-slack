@@ -17,9 +17,13 @@ storage_client = storage.Client()
 
 # Define the BigQuery SQL query to retrieve the data
 query = f"""
-    SELECT *
-    FROM `{os.environ["TABLE"]}`
-    LIMIT 5
+    SELECT 
+     logName,
+     resource.type,
+     textPayload,
+     severity,
+    FROM `{os.environ["TABLE"]}` 
+    LIMIT 3;
 """
 
 bigqueryClient = bigquery.Client()
