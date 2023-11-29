@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: bigquery-cron
+  namespace: bigquery
+spec:
+  schedule: "30 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: bigquery-sa
+          containers:
+          - name: bigquery-cron
+            image: gcr.io/useful-circle-358120/bigq-gcp-sb
+            imagePullPolicy: IfNotPresent
+            # command:
+            # - /bin/sh
+            # - -c
+            # - date; echo Hello from the Kubernetes cluster
+            env:
+            - name: TABLE
+              value: useful-circle-358120.log_sink.cloudaudit_googleapis_com_activity_20231122            
+            - name: BUCKET
+              value: bigquery-test-chainomi-2023
+          restartPolicy: OnFailure

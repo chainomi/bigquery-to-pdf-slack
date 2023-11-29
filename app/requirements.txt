@@ -1,0 +1,9 @@
+google
+google-cloud-bigquery
+google-cloud-storage
+pandas
+pdfkit
+db_dtypes
+jinja2
+slack-sdk>=3.12,<4
+weasyprint
