@@ -13,6 +13,69 @@ Use the following commands to run the application using python
     > `export BUCKET="bigquery-test-chainomi-2023"`
 
 > 6. Run application - `python3 app.py`
+## Docker run
+
+From root folder
+>1. Build container - `docker build -t bigq-gcp-sb .`
+>2. Login to google to get ADC (application default credentials) into ~/.gcloud/config - `gcloud auth application-default login` 
+>3. Docker run - 
+
+    `docker run  \
+    -v ~/.config/gcloud:/home/app-user/.config/gcloud \
+    -e TABLE="useful-circle-358120.log_sink.cloudaudit_googleapis_com_activity_20231122" \
+    -e GOOGLE_PROJECT="useful-circle-358120" \
+    -e GCP_PROJECT=useful-circle-358120
+    -e SLACK_BOT_TOKEN=xxxx \
+    bigq-gcp-sb`
+
+docker run  \
+-v ~/.config/gcloud:/home/app-user/.config/gcloud \
+-e TABLE="useful-circle-358120.log_sink.cloudaudit_googleapis_com_activity_20231122" \
+-e GOOGLE_CLOUD_PROJECT=useful-circle-358120 \
+-e SLACK_BOT_TOKEN=xxxx \
+bigq-gcp-sb
+
+docker run  \
+-e TABLE="useful-circle-358120.log_sink.cloudaudit_googleapis_com_activity_20231122" \
+-e GOOGLE_OAUTH_ACCESS_TOKEN=$(gcloud auth print-access-token --impersonate-service-account=big-query-sql-sa@useful-circle-358120.iam.gserviceaccount.com) \
+-e SLACK_BOT_TOKEN=xxxx \
+bigq-gcp-sb
+
+
+## Deploy to cluster
+
+### docker tag & push
+1. gcloud login - `gcloud auth login`
+2. set project - `gcloud config set project <project id>`
+3. add docker credentials to $HOME/.docker/config.json - `gcloud auth configure-docker`
+https://cloud.google.com/container-registry/docs/advanced-authentication
+
+1. Tag image - `docker tag bigq-gcp-sb gcr.io/useful-circle-358120/bigq-gcp-sb:v1`
+2. Push image - `docker push gcr.io/useful-circle-358120/bigq-gcp-sb:v1`
+
+### setup workload identity
+---
+## Apply kubernetes resources
+From root folder
+1. Connect to cluser - `gcloud container clusters get-credentials <cluster-name> --region us-central1 --project <project_id>`
+2. Apply resources - `kube`
+connect to cluster
+install gke-gcloud-auth-plugin - https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
+
+
+
+
+
+
+
+ubuntu - sudo apt-get install google-cloud-sdk-gke-gcloud-auth-plugin
+windows - 
+
+gcloud container clusters get-credentials big-query-sql-cluster --region us-central1 --project useful-circle-358120
+
+gcloud container clusters get-credentials <cluster-name> --region <region> --project <project-id>
+
+windows install - https://cloud.google.com/sdk/docs/downloads-interactive
 
 Slack push
 
@@ -56,25 +119,5 @@ docker run  \
 bigq-gcp-sb
 
 
-docker tag & push
-gcloud auth login
-add docker credentials to $HOME/.docker/config.json - gcloud auth configure-docker
-https://cloud.google.com/container-registry/docs/advanced-authentication
 
-
-docker tag bigq-gcp-sb gcr.io/useful-circle-358120/bigq-gcp-sb
-docker push gcr.io/useful-circle-358120/bigq-gcp-sb
-
-connect to cluster
-
-install gke-gcloud-auth-plugin - https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
-
-ubuntu - sudo apt-get install google-cloud-sdk-gke-gcloud-auth-plugin
-windows - 
-
-gcloud container clusters get-credentials big-query-sql-cluster --region us-central1 --project useful-circle-358120
-
-gcloud container clusters get-credentials <cluster-name> --region <region> --project <project-id>
-
-windows install - https://cloud.google.com/sdk/docs/downloads-interactive
 

@@ -2,6 +2,8 @@ FROM python:3.10-slim-bullseye
 
 RUN apt-get update 
 
+RUN apt-get -y install libpango-1.0-0 libpangoft2-1.0-0
+
 # Make dir app
 RUN mkdir /app
 
@@ -26,4 +28,4 @@ RUN chown app-user /app
 USER app-user 
 
 # Run the executable
-CMD ["python", "app.py"]
+CMD ["python", "app2slack-multiple-refactor.py"]

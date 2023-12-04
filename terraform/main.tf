@@ -4,6 +4,14 @@ provider "google" {
   credentials = "../useful-circle-358120-5ebbc15b4e95.json"
 }
 
+provider "helm" {
+  kubernetes {
+    host     = "https://${google_container_cluster.primary.endpoint}"
+    token    = data.google_client_config.default.access_token
+  }
+}
+
+
 locals {
     name_prefix = "big-query-sql"
     region = "us-central1"
@@ -35,6 +43,12 @@ resource "google_project_iam_member" "default_sa_bindings" {
     member  = "serviceAccount:${google_service_account.default_node.email}"
   
 }
+
+
+# GKE cluster
+
+# for helm provider
+data "google_client_config" "default" {}
 
 resource "google_container_cluster" "primary" {
   name = "${local.name_prefix}-cluster"
@@ -79,6 +93,17 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 }
 
 
+resource "helm_release" "jenkins" {
+  name       = "secrets-store-csi-driver-provider-gcp"
+  # version    = "4.8.2"
+  namespace  = "kube-system" 
+  repository = " https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"
+  chart      = "charts/secrets-store-csi-driver-provider-gcp"
+
+  create_namespace = true
+
+}
+
 
 # Worker identity setup from here 
 
@@ -112,12 +137,6 @@ resource "google_project_iam_member" "wi_sa_bindings" {
   
 }
 
-# resource "google_service_account_iam_member" "main" {
-#     service_account_id = google_service_account.cluster_service_account.name
-#     role = "roles/iam.workloadIdentityUser"
-#     member = "serviceAccount:${local.project_id}.svc.id.goog"
-  
-# }
 
 resource "google_service_account_iam_binding" "workload_identity_binding" {
   service_account_id = google_service_account.cluster_service_account.name
