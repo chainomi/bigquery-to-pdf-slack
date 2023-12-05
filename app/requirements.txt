@@ -1,6 +1,6 @@
 google
 google-cloud-bigquery
-google-cloud-storage
+google-cloud-secret-manager
 pandas
 pdfkit
 db_dtypes

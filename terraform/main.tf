@@ -4,12 +4,12 @@ provider "google" {
   credentials = "../useful-circle-358120-5ebbc15b4e95.json"
 }
 
-provider "helm" {
-  kubernetes {
-    host     = "https://${google_container_cluster.primary.endpoint}"
-    token    = data.google_client_config.default.access_token
-  }
-}
+# provider "helm" {
+#   kubernetes {
+#     host     = "https://${google_container_cluster.primary.endpoint}"
+#     token    = data.google_client_config.default.access_token
+#   }
+# }
 
 
 locals {
@@ -48,7 +48,7 @@ resource "google_project_iam_member" "default_sa_bindings" {
 # GKE cluster
 
 # for helm provider
-data "google_client_config" "default" {}
+# data "google_client_config" "default" {}
 
 resource "google_container_cluster" "primary" {
   name = "${local.name_prefix}-cluster"
@@ -93,16 +93,16 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
 }
 
 
-resource "helm_release" "jenkins" {
-  name       = "secrets-store-csi-driver-provider-gcp"
-  # version    = "4.8.2"
-  namespace  = "kube-system" 
-  repository = " https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"
-  chart      = "charts/secrets-store-csi-driver-provider-gcp"
+# resource "helm_release" "jenkins" {
+#   name       = "secrets-store-csi-driver-provider-gcp"
+#   # version    = "4.8.2"
+#   namespace  = "kube-system" 
+#   repository = " https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts"
+#   chart      = "charts/secrets-store-csi-driver-provider-gcp"
 
-  create_namespace = true
+#   create_namespace = true
 
-}
+# }
 
 
 # Worker identity setup from here 
@@ -123,7 +123,8 @@ locals {
         "roles/bigquery.dataViewer",
         "roles/storage.insightsCollectorService",
         "roles/storage.objectUser",
-        "roles/storage.objectCreator"
+        "roles/storage.objectCreator",
+        "roles/secretmanager.secretAccessor"
     ]
 }
 

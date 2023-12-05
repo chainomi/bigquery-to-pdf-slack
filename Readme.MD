@@ -10,9 +10,10 @@ Use the following commands to run the application using python
     > `export GOOGLE_APPLICATION_CREDENTIALS="path/to/key.json"`
     >  run `gcloud auth application-default login` to set ADC (application default credentials) if you wish to no use a key 
     > `export TABLE="useful-circle-358120.log_sink.cloudaudit_googleapis_com_activity_20231122"` 
-    > `export BUCKET="bigquery-test-chainomi-2023"`
+    > `export BUCKET="bigquery-test-chainomi-2023"` for bucket storage app (app2slack.py)
 
-> 6. Run application - `python3 app.py`
+> 6. Run application - `python3 app2slack-multiple-refactor.py`
+> 
 ## Docker run
 
 From root folder
@@ -20,26 +21,19 @@ From root folder
 >2. Login to google to get ADC (application default credentials) into ~/.gcloud/config - `gcloud auth application-default login` 
 >3. Docker run - 
 
-    `docker run  \
-    -v ~/.config/gcloud:/home/app-user/.config/gcloud \
-    -e TABLE="useful-circle-358120.log_sink.cloudaudit_googleapis_com_activity_20231122" \
-    -e GOOGLE_PROJECT="useful-circle-358120" \
-    -e GCP_PROJECT=useful-circle-358120
-    -e SLACK_BOT_TOKEN=xxxx \
-    bigq-gcp-sb`
-
+### mounting to gcloud folder for credentials
 docker run  \
 -v ~/.config/gcloud:/home/app-user/.config/gcloud \
 -e TABLE="useful-circle-358120.log_sink.cloudaudit_googleapis_com_activity_20231122" \
 -e GOOGLE_CLOUD_PROJECT=useful-circle-358120 \
--e SLACK_BOT_TOKEN=xxxx \
 bigq-gcp-sb
 
+## impersonation - WIP does not work yet
 docker run  \
 -e TABLE="useful-circle-358120.log_sink.cloudaudit_googleapis_com_activity_20231122" \
 -e GOOGLE_OAUTH_ACCESS_TOKEN=$(gcloud auth print-access-token --impersonate-service-account=big-query-sql-sa@useful-circle-358120.iam.gserviceaccount.com) \
--e SLACK_BOT_TOKEN=xxxx \
 bigq-gcp-sb
+
 
 
 ## Deploy to cluster

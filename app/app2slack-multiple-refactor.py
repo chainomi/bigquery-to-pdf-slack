@@ -1,10 +1,10 @@
 from google.cloud import bigquery
+from google.cloud import secretmanager
 import time
 import pandas as pd
 from slack_sdk import WebClient
 import logging, os
-from weasyprint import HTML,CSS
-
+from weasyprint import HTML, CSS
 
 html_file_name = "test-name.html"
 csv_file_name = "test-name.csv"
@@ -52,7 +52,27 @@ query3 = f"""
 queries = [query1, query2, query3]
 report_names = ["Query1", "Query2", "Query3"]
 
-slack_token = os.environ["SLACK_BOT_TOKEN"]
+#slack_token = os.environ["SLACK_BOT_TOKEN"]
+
+#retrieve slack_token
+
+project_number = "976036132338"
+secret_name = "slack_token"
+secret_version = "latest"
+
+def slack_secret(project_number, secret_name, secret_version):
+    client = secretmanager.SecretManagerServiceClient()
+
+    name = client.secret_version_path(
+            project=project_number,
+            secret=secret_name,
+            secret_version=secret_version
+        )
+    payload = client.access_secret_version(name=name).payload.data.decode("utf-8")
+
+    return payload
+
+slack_token = slack_secret(project_number, secret_name, secret_version)
 
 
 def query_to_pdf(query, report_name):
@@ -83,6 +103,7 @@ def slack_push(report_name):
         #initial_comment=f"{report_name} file:",
     )
     print(f"{report_name} pushed to slack channel")
+
 
 
 def main():

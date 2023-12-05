@@ -12,11 +12,9 @@ spec:
           serviceAccountName: bigquery-sa
           containers:
           - name: bigquery-cron
-            image: gcr.io/useful-circle-358120/bigq-gcp-sb:v1
+            image: gcr.io/useful-circle-358120/bigq-gcp-sb:v2
             imagePullPolicy: IfNotPresent
             env:
             - name: TABLE
               value: useful-circle-358120.log_sink.cloudaudit_googleapis_com_activity_20231122            
-            - name: SLACK_BOT_TOKEN
-              value: xxxx
           restartPolicy: OnFailure
