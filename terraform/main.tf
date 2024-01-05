@@ -55,6 +55,7 @@ resource "google_container_cluster" "primary" {
   location = local.region
   remove_default_node_pool = true
   initial_node_count = 1
+  deletion_protection = false
 
   network    = google_compute_network.bigquery_vpc.name
   subnetwork = google_compute_subnetwork.bigquery-subnet.name

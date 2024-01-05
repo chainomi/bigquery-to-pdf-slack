@@ -74,18 +74,19 @@ def slack_secret(project_number, secret_name, secret_version):
 
 slack_token = slack_secret(project_number, secret_name, secret_version)
 
+import numpy as np
 
 def query_to_pdf(query, report_name):
     bigqueryClient = bigquery.Client()
     
 
     df = bigqueryClient.query(query).result().to_dataframe()
-    df.to_csv(csv_file_name, index=False)
-
+    # df.to_csv(csv_file_name, index=False)
+    df.replace(np.nan, '').to_html(html_file_name)
     
-    CSV = pd.read_csv(csv_file_name)
-    # CSV.to_html(html_file_name).replace('<tr>','<tr style="text-align: right;">')  
-    CSV.to_html(html_file_name)
+    # CSV = pd.read_csv(csv_file_name, na_filter=False)
+    # # CSV.to_html(html_file_name).replace('<tr>','<tr style="text-align: right;">')  
+    # CSV.to_html(html_file_name)
     htmldoc = HTML(html_file_name).write_pdf( pdf_file_name, stylesheets=[CSS(string='body { font-family: Times New Roman; font-size: 10px; } table { background-color:#F4FAF9;border-collapse:collapse;} td,th { padding:5px;border:1px solid;} th { background-color:#05D7CC;} @page {size: Letter;  margin: 0in 0.44in 0.2in 0.44in; }')])
     print(f"{report_name} converted to pdf")
 
